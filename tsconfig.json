@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "module": "NodeNext", "moduleResolution": "NodeNext", "target": "ES2022",
+    "rootDir": "src", "outDir": "dist", "declaration": true,
+    "declarationMap": true, "sourceMap": true, "noEmit": false,
+    "paths": {}, "types": [], "lib": ["ES2022", "DOM"]
+  },
+  "include": ["src/**/*.ts"]
+}

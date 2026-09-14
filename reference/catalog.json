@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0.0",
+  "package": "@konitif/nodal",
+  "intent": "Make a graph editable, validatable and executable without conflating its model, dialect and runtime.",
+  "clusters": [
+    {
+      "id": "graph-authority",
+      "title": "Graph and commands",
+      "summary": "Canonical graph state and admitted mutations.",
+      "authority": "Nodal graph authority.",
+      "owns": ["nodes", "edges", "commands", "commits"],
+      "doesNotOwn": ["rendering", "execution"],
+      "workflow": ["Declare", "Command", "Commit"],
+      "sourcePrefixes": [
+        "core/commands",
+        "core/commit",
+        "core/graph",
+        "core/serializer",
+        "core/validation",
+        "core/nodeSemantics"
+      ],
+      "sources": ["nodePresentation.ts"]
+    },
+    {
+      "id": "composition",
+      "title": "Composition and editing",
+      "summary": "Patch and preview reversible changes.",
+      "authority": "Derived editing artifacts.",
+      "owns": ["patches", "shadow editing", "adaptation"],
+      "doesNotOwn": ["committed graph"],
+      "workflow": ["Derive", "Inspect", "Apply"],
+      "sourcePrefixes": ["composition/"]
+    },
+    {
+      "id": "dialects",
+      "title": "Dialects",
+      "summary": "Language specializations admitted by the graph.",
+      "authority": "Declared dialect vocabulary.",
+      "owns": ["mathematical dialect", "presentation metadata"],
+      "doesNotOwn": ["generic runtime"],
+      "workflow": ["Define", "Register", "Resolve"],
+      "sourcePrefixes": ["dialects/"]
+    },
+    {
+      "id": "runtime",
+      "title": "Execution and observation",
+      "summary": "Execute a graph and expose its runtime readings.",
+      "authority": "Observable Nodal execution.",
+      "owns": ["execution", "compatibility", "read models"],
+      "doesNotOwn": ["product meaning"],
+      "workflow": ["Admit", "Execute", "Observe"],
+      "sourcePrefixes": ["runtime/"]
+    },
+    {
+      "id": "contracts",
+      "title": "Public contracts",
+      "summary": "Shared types and registries.",
+      "authority": "Nodal integration contracts.",
+      "owns": ["types", "registries", "tool module"],
+      "doesNotOwn": ["providers"],
+      "workflow": ["Declare", "Resolve", "Use"],
+      "sourcePrefixes": ["types/"],
+      "sources": ["toolModule.ts"]
+    }
+  ]
+}

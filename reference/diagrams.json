@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "package": "@konitif/nodal",
+  "diagrams": [
+    {
+      "id": "graph-command-cycle",
+      "title": "From editing intent to graph observation",
+      "kind": "lifecycle",
+      "summary": "The graph changes through commands, is committed and validated, then is evaluated by a distinct runtime.",
+      "nodes": [
+        { "id": "intent", "label": "Editing intent", "description": "A graph change is formulated." },
+        { "id": "command", "label": "Command", "description": "The requested mutation is typed." },
+        { "id": "commit", "label": "Graph commit", "description": "The authority commits a new revision." },
+        { "id": "validation", "label": "Validation", "description": "Connections, types and dialect rules are checked." },
+        { "id": "execution", "label": "Execution", "description": "Admitted executors evaluate the graph.", "tone": "runtime" },
+        { "id": "readmodel", "label": "Runtime reading", "description": "Results and diagnostics become observable.", "tone": "observation" }
+      ],
+      "edges": [
+        { "from": "intent", "to": "command" },
+        { "from": "command", "to": "commit" },
+        { "from": "commit", "to": "validation" },
+        { "from": "validation", "to": "execution" },
+        { "from": "execution", "to": "readmodel" }
+      ],
+      "caption": "The Nodal projection is neither the canonical graph nor its runtime."
+    }
+  ]
+}
