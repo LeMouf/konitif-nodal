@@ -1,4 +1,4 @@
-import { validateComposition } from './helpers.js';
+import { validateComposition } from '@konitif/composition';
 import type {
   Composition,
   CompositionValidationIssue,
@@ -6,7 +6,7 @@ import type {
   Connection,
   Domain,
   Module
-} from './model.js';
+} from '@konitif/composition';
 
 export type CompositionPatch =
   | AddModulePatch

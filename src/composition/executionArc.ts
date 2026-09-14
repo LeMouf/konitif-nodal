@@ -1,7 +1,7 @@
 import type {
   Composition,
   Connection
-} from './model.js';
+} from '@konitif/composition';
 import type {
   CompositionRuntimeDiagnostic,
   CompositionRuntimeModuleState,

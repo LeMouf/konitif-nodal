@@ -7,8 +7,12 @@ import {
   type CompositionPatch,
   type CompositionPatchResult
 } from './patches.js';
-import { validateComposition } from './helpers.js';
-import type { Composition, CompositionValidationIssue, CompositionValidationResult } from './model.js';
+import {
+  validateComposition,
+  type Composition,
+  type CompositionValidationIssue,
+  type CompositionValidationResult
+} from '@konitif/composition';
 import {
   nodalEdgeToConnection,
   nodalGraphToWorkflow,

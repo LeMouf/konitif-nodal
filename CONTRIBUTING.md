@@ -13,5 +13,4 @@ npm test
 npm run verify:package
 ```
 
-Keep graph authority independent from editors and product dialects; keep relative Node ESM imports explicit. Follow `RELEASE.md` for publication.
-
+Keep graph authority independent from editors and domain dialects; keep relative Node ESM imports explicit. Follow `RELEASE.md` for publication.

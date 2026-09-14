@@ -6,6 +6,11 @@ import {
   createNodalGraphDocument,
   executeGraphDocument,
   mathDialect,
+  mathDialectContributions,
+  composeNodalDialect,
+  NodalDialectRegistry,
+  NodalPresentationRegistry,
+  registerNodalDialectContributions,
   parseGraphDocument,
   serializeGraphDocument,
   validateGraphDocument,
@@ -41,4 +46,70 @@ test('validates and executes a product-neutral graph deterministically', () => {
 test('round-trips a graph through its stable serialized representation', () => {
   const { graph } = createProofGraph();
   assert.deepEqual(parseGraphDocument(serializeGraphDocument(graph)), graph);
+});
+
+test('separates schema, admission and execution contributions in a scoped lifecycle', () => {
+  const registry = new NodalDialectRegistry();
+  const registrations = registerNodalDialectContributions(registry, mathDialectContributions);
+
+  assert.equal(registry.state, 'created');
+  assert.equal(registry.resolve('math'), null);
+  registry.activate();
+
+  const runtime = registry.resolve('math');
+  assert.ok(runtime);
+  assert.equal(runtime.schema.id, 'math');
+  assert.ok(runtime.schema.nodeRegistry.every((definition) => !Object.hasOwn(definition, 'execute')));
+  assert.ok(runtime.execution.bindings.every((binding) => typeof binding.execute === 'function'));
+  assert.equal(typeof runtime.admission?.validate, 'function');
+
+  const compatibilityDialect = composeNodalDialect(runtime);
+  const { graph, outputNodeId } = createProofGraph();
+  assert.equal(executeGraphDocument(graph, compatibilityDialect).outputsByNodeId[outputNodeId].value, 4);
+
+  assert.throws(() => registry.registerSchema({
+    id: 'proof.duplicate-schema',
+    version: '1.0.0',
+    dialectId: 'math',
+    nodeDefinitions: [runtime.schema.nodeRegistry[0]],
+  }), /Duplicate Nodal schema target/);
+
+  registry.deactivate();
+  assert.equal(registry.resolve('math'), null);
+  registry.activate();
+  for (const registration of registrations) registration.dispose();
+  assert.equal(registry.resolve('math'), null);
+  registry.dispose();
+  assert.throws(() => registry.resolve('math'), /registry is disposed/);
+});
+
+test('scopes presentation contributions to an explicit host lifecycle', () => {
+  const registry = new NodalPresentationRegistry();
+  const registration = registry.register({
+    id: 'proof.presentation',
+    version: '1.0.0',
+    dialectId: 'proof',
+    projectionKind: 'workflow',
+    presentation: {
+      families: {
+        source: { color: '#111111', rgb: '17, 17, 17' },
+        compute: { color: '#222222', rgb: '34, 34, 34' },
+        output: { color: '#333333', rgb: '51, 51, 51' },
+      },
+    },
+  });
+
+  assert.equal(registry.state, 'created');
+  assert.equal(registry.resolve('proof', 'workflow').families.compute.color, '#ffd56a');
+  registry.activate();
+  assert.equal(registry.resolve('proof', 'workflow').families.compute.color, '#222222');
+  assert.equal(registry.resolve('proof', 'blockly').families.compute.color, '#ffd56a');
+  registry.deactivate();
+  assert.equal(registry.resolve('proof', 'workflow').families.compute.color, '#ffd56a');
+  registry.activate();
+  registration.dispose();
+  assert.equal(registry.resolve('proof', 'workflow').families.compute.color, '#ffd56a');
+  registry.dispose();
+  assert.equal(registry.state, 'disposed');
+  assert.throws(() => registry.list(), /registry is disposed/);
 });

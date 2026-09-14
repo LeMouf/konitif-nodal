@@ -1,5 +1,8 @@
 import type { NodalGraphNode, NodalGraphPort } from '../types/model.js';
-import { getNodalDialectPresentation } from '../dialects/presentation.js';
+import {
+  getNodalDialectPresentation,
+  type NodalDialectPresentation
+} from '../dialects/presentation.js';
 import { getNodalNodeFamily, isNodalInlineConfigNode } from './nodeSemantics.js';
 
 export type NodalInlineConfigInputType = 'text' | 'checkbox';
@@ -8,7 +11,8 @@ export type NodalPortSemanticRole = 'param' | 'model' | 'computed' | 'action';
 export function getNodalSignalAccent(
   port: NodalGraphPort | null,
   node: NodalGraphNode | null,
-  dialectId?: string | null
+  dialectId?: string | null,
+  presentation?: NodalDialectPresentation
 ): string {
   if (port?.dataType === 'number') {
     return 'var(--nws-signal-number)';
@@ -31,16 +35,17 @@ export function getNodalSignalAccent(
   }
 
   if (node) {
-    return getNodalNodeAccent(node, dialectId);
+    return getNodalNodeAccent(node, dialectId, presentation);
   }
 
-  return getNodalDialectPresentation(dialectId).families.source.color;
+  return resolvePresentation(dialectId, presentation).families.source.color;
 }
 
 export function getNodalSignalAccentRgb(
   port: NodalGraphPort | null,
   node: NodalGraphNode | null,
-  dialectId?: string | null
+  dialectId?: string | null,
+  presentation?: NodalDialectPresentation
 ): string {
   if (port?.dataType === 'number') {
     return '134, 185, 255';
@@ -62,10 +67,10 @@ export function getNodalSignalAccentRgb(
     return '215, 168, 255';
   }
 
-  const presentation = getNodalDialectPresentation(dialectId);
+  const resolvedPresentation = resolvePresentation(dialectId, presentation);
 
   if (node) {
-    const nodeTypeAccent = presentation.nodeTypeAccents?.[node.type];
+    const nodeTypeAccent = resolvedPresentation.nodeTypeAccents?.[node.type];
 
     if (nodeTypeAccent) {
       return nodeTypeAccent.rgb;
@@ -73,14 +78,14 @@ export function getNodalSignalAccentRgb(
   }
 
   if (node && getNodalNodeFamily(node) === 'output') {
-    return presentation.families.output.rgb;
+    return resolvedPresentation.families.output.rgb;
   }
 
   if (node && getNodalNodeFamily(node) === 'compute') {
-    return presentation.families.compute.rgb;
+    return resolvedPresentation.families.compute.rgb;
   }
 
-  return presentation.families.source.rgb;
+  return resolvedPresentation.families.source.rgb;
 }
 
 export function getNodalSignalDasharray(port: NodalGraphPort | null): string | null {
@@ -95,13 +100,17 @@ export function getNodalSignalDasharray(port: NodalGraphPort | null): string | n
   return null;
 }
 
-export function getNodalNodeAccent(node: NodalGraphNode, dialectId?: string | null): string {
+export function getNodalNodeAccent(
+  node: NodalGraphNode,
+  dialectId?: string | null,
+  presentation?: NodalDialectPresentation
+): string {
   if (node.appearance?.color) {
     return node.appearance.color;
   }
 
-  const presentation = getNodalDialectPresentation(dialectId);
-  const nodeTypeAccent = presentation.nodeTypeAccents?.[node.type];
+  const resolvedPresentation = resolvePresentation(dialectId, presentation);
+  const nodeTypeAccent = resolvedPresentation.nodeTypeAccents?.[node.type];
 
   if (nodeTypeAccent) {
     return nodeTypeAccent.color;
@@ -110,19 +119,23 @@ export function getNodalNodeAccent(node: NodalGraphNode, dialectId?: string | nu
   const family = getNodalNodeFamily(node);
 
   if (family === 'source') {
-    return presentation.families.source.color;
+    return resolvedPresentation.families.source.color;
   }
 
   if (family === 'output') {
-    return presentation.families.output.color;
+    return resolvedPresentation.families.output.color;
   }
 
-  return presentation.families.compute.color;
+  return resolvedPresentation.families.compute.color;
 }
 
-export function getNodalNodeFamilyLabel(node: NodalGraphNode, dialectId?: string | null): string {
+export function getNodalNodeFamilyLabel(
+  node: NodalGraphNode,
+  dialectId?: string | null,
+  presentation?: NodalDialectPresentation
+): string {
   const family = getNodalNodeFamily(node);
-  const labels = getNodalDialectPresentation(dialectId).familyLabels;
+  const labels = resolvePresentation(dialectId, presentation).familyLabels;
   return labels?.[family] ?? (family === 'source' ? 'Source' : family === 'output' ? 'Output' : 'Compute');
 }
 
@@ -232,4 +245,11 @@ export function getNodalPortSemanticGlyph(port: NodalGraphPort): string {
 
 export function getNodalPortAccessibilityLabel(port: NodalGraphPort): string {
   return `${port.label}, ${getNodalPortSemanticLabel(port)}, ${port.dataType}`;
+}
+
+function resolvePresentation(
+  dialectId: string | null | undefined,
+  presentation: NodalDialectPresentation | undefined
+): NodalDialectPresentation {
+  return presentation ?? getNodalDialectPresentation(dialectId);
 }

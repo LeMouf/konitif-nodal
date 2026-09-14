@@ -1,13 +1,19 @@
 import { validateGraphDocument } from '../core/validation.js';
 import { executeScalarAdd, executeScalarConstantNumber, executeScalarMultiply } from '../runtime/scalarMathExecutors.js';
 import type { NodalDialect } from '../types/registry.js';
+import {
+  composeNodalDialect,
+  NodalDialectRegistry,
+  registerNodalDialectContributions,
+  splitNodalDialect
+} from './registry.js';
 
 function normalizeNumber(value: unknown): number {
   const parsed = typeof value === 'number' ? value : Number(value ?? 0);
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export const mathDialect: NodalDialect = {
+const legacyMathDialect: NodalDialect = {
   id: 'math',
   title: 'Math Dataflow',
   nodeRegistry: [
@@ -97,3 +103,21 @@ export const mathDialect: NodalDialect = {
     return validateGraphDocument(graph);
   }
 };
+
+export const mathDialectContributions = splitNodalDialect(legacyMathDialect, {
+  contributionId: 'konitif.reference.math',
+  version: '1.0.0'
+});
+
+const mathDialectRegistry = new NodalDialectRegistry();
+registerNodalDialectContributions(mathDialectRegistry, mathDialectContributions);
+mathDialectRegistry.activate();
+
+const mathDialectRuntime = mathDialectRegistry.resolve(legacyMathDialect.id);
+if (!mathDialectRuntime) {
+  throw new Error('The built-in math dialect contributions did not resolve.');
+}
+
+/** Compatibility bundle for callers that have not adopted separated contributions yet. */
+export const mathDialect = composeNodalDialect(mathDialectRuntime);
+mathDialectRegistry.dispose();

@@ -19,27 +19,37 @@
         "core/validation",
         "core/nodeSemantics"
       ],
-      "sources": ["nodePresentation.ts"]
+      "sources": []
     },
     {
       "id": "composition",
       "title": "Composition and editing",
-      "summary": "Patch and preview reversible changes.",
+      "summary": "Adapt graph projections to the external Composition authority.",
       "authority": "Derived editing artifacts.",
-      "owns": ["patches", "shadow editing", "adaptation"],
-      "doesNotOwn": ["committed graph"],
+      "owns": ["projection patches", "shadow editing", "adaptation"],
+      "doesNotOwn": ["Composition contracts", "committed Composition"],
       "workflow": ["Derive", "Inspect", "Apply"],
       "sourcePrefixes": ["composition/"]
     },
     {
       "id": "dialects",
       "title": "Dialects",
-      "summary": "Language specializations admitted by the graph.",
-      "authority": "Declared dialect vocabulary.",
-      "owns": ["mathematical dialect", "presentation metadata"],
-      "doesNotOwn": ["generic runtime"],
-      "workflow": ["Define", "Register", "Resolve"],
-      "sourcePrefixes": ["dialects/"]
+      "summary": "Compose versioned schema, admission and execution contributions without hiding their ownership.",
+      "authority": "Host-selected dialect contributions.",
+      "owns": ["registry lifecycle", "schema composition", "admission composition", "executor bindings", "mathematical reference dialect"],
+      "doesNotOwn": ["global registry", "domain dialect", "projection presentation"],
+      "workflow": ["Register", "Activate", "Resolve", "Deactivate", "Dispose"],
+      "sourcePrefixes": ["dialects/registry", "dialects/math"]
+    },
+    {
+      "id": "projection-contributions",
+      "title": "Projection contributions",
+      "summary": "Resolve host-scoped presentations for extensible projection kinds.",
+      "authority": "Host-selected projection configuration.",
+      "owns": ["registry contract", "lifecycle", "fallback presentation"],
+      "doesNotOwn": ["global registry", "renderer implementation", "domain theme"],
+      "workflow": ["Register", "Activate", "Resolve", "Deactivate", "Dispose"],
+      "sourcePrefixes": ["dialects/presentation", "core/nodePresentation"]
     },
     {
       "id": "runtime",
@@ -47,7 +57,7 @@
       "summary": "Execute a graph and expose its runtime readings.",
       "authority": "Observable Nodal execution.",
       "owns": ["execution", "compatibility", "read models"],
-      "doesNotOwn": ["product meaning"],
+      "doesNotOwn": ["domain meaning"],
       "workflow": ["Admit", "Execute", "Observe"],
       "sourcePrefixes": ["runtime/"]
     },

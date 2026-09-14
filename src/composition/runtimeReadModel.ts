@@ -1,5 +1,10 @@
-import { findCompositionModule, findCompositionPort } from './helpers.js';
-import type { Composition, CompositionValidationResult, Module } from './model.js';
+import {
+  findCompositionModule,
+  findCompositionPort,
+  type Composition,
+  type CompositionValidationResult,
+  type Module
+} from '@konitif/composition';
 
 export type CompositionRuntimeDiagnosticSeverity = 'error' | 'warning' | 'info';
 

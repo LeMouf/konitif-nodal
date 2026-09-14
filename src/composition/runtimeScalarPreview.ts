@@ -1,5 +1,4 @@
-import { findCompositionModule } from './helpers.js';
-import type { Composition, Module } from './model.js';
+import { findCompositionModule, type Composition, type Module } from '@konitif/composition';
 import { executeCompositionScalarModule } from './runtimeScalarBridge.js';
 import {
   resolveCompositionExecutionOrder,
