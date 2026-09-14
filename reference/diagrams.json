@@ -22,7 +22,51 @@
         { "from": "validation", "to": "execution" },
         { "from": "execution", "to": "readmodel" }
       ],
-      "caption": "The Nodal projection is neither the canonical graph nor its runtime."
+      "caption": "A Composition-backed Nodal projection is neither the canonical Composition nor its runtime."
+    },
+    {
+      "id": "presentation-registry-lifecycle",
+      "title": "Scope a projection presentation",
+      "kind": "lifecycle",
+      "summary": "A host owns presentation contributions and exposes them only while its registry is active.",
+      "nodes": [
+        { "id": "created", "label": "Created", "description": "The host creates an empty scoped registry." },
+        { "id": "registered", "label": "Registered", "description": "Versioned contributions target a dialect and projection kind." },
+        { "id": "active", "label": "Active", "description": "Matching presentations can be resolved.", "tone": "projection" },
+        { "id": "inactive", "label": "Inactive", "description": "Resolution falls back without deleting declarations." },
+        { "id": "disposed", "label": "Disposed", "description": "Contributions are released and the registry cannot be reused." }
+      ],
+      "edges": [
+        { "from": "created", "to": "registered" },
+        { "from": "registered", "to": "active" },
+        { "from": "active", "to": "inactive" },
+        { "from": "inactive", "to": "active" },
+        { "from": "active", "to": "disposed" },
+        { "from": "inactive", "to": "disposed" }
+      ],
+      "caption": "Importing a domain specialization does not mutate presentation state owned by another host."
+    },
+    {
+      "id": "dialect-contribution-resolution",
+      "title": "Resolve a dialect without merging responsibilities",
+      "kind": "flow",
+      "summary": "A host registers schema, admission and execution independently, then resolves one runtime view for a selected dialect.",
+      "nodes": [
+        { "id": "schema", "label": "Schema contributions", "description": "Declare node types, ports and defaults." },
+        { "id": "admission", "label": "Admission contributions", "description": "Validate domain rules without executing nodes." },
+        { "id": "executors", "label": "Execution contributions", "description": "Bind admitted node types to runtime functions.", "tone": "runtime" },
+        { "id": "registry", "label": "Host registry", "description": "Reject duplicate targets and expose contributions only while active." },
+        { "id": "runtime", "label": "Resolved dialect runtime", "description": "Keep schema, admission and execution as distinct lanes.", "tone": "observation" },
+        { "id": "compatibility", "label": "Compatibility bundle", "description": "Temporarily serve callers that still accept one dialect value." }
+      ],
+      "edges": [
+        { "from": "schema", "to": "registry" },
+        { "from": "admission", "to": "registry" },
+        { "from": "executors", "to": "registry" },
+        { "from": "registry", "to": "runtime" },
+        { "from": "runtime", "to": "compatibility" }
+      ],
+      "caption": "The compatibility bundle is derived from the resolved contributions and does not own their lifecycle."
     }
   ]
 }

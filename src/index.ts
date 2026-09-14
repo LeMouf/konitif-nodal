@@ -8,6 +8,7 @@ export * from './core/serializer.js';
 export * from './core/validation.js';
 export * from './dialects/math.js';
 export * from './dialects/presentation.js';
+export * from './dialects/registry.js';
 export * from './runtime/executeGraph.js';
 export * from './runtime/scalarMathExecutors.js';
 export * from './toolModule.js';

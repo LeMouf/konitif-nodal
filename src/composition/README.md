@@ -19,7 +19,7 @@ Legacy tool states containing only `graph` are admitted at the persistence bound
 
 ## Diagnostic compatibility
 
-The historical `CompositionShadowState` remains temporarily available to compare old and new paths in technical diagnostics. It is not an authority and must not drive product behavior. Its `shadowRevision` remains a local diagnostic counter only.
+The historical `CompositionShadowState` remains temporarily available to compare old and new paths in technical diagnostics. It is not an authority and must not drive domain behavior. Its `shadowRevision` remains a local diagnostic counter only.
 
 ## Invariants
 

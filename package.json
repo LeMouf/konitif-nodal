@@ -1,10 +1,10 @@
 {
   "name": "@konitif/nodal",
   "license": "PolyForm-Noncommercial-1.0.0",
-  "version": "0.284.2",
+  "version": "0.285.0",
   "private": false,
   "type": "module",
-  "description": "Product-neutral graph authoring, validation, serialization and deterministic execution for KONITIF applications.",
+  "description": "Portable graph mechanics, scoped projection contributions and deterministic execution for KONITIF systems.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LeMouf/konitif-nodal.git"

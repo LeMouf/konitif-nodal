@@ -1,9 +1,9 @@
-import { validateComposition } from './helpers.js';
+import { validateComposition } from '@konitif/composition';
 import type {
   Composition,
   CompositionValidationIssue,
   CompositionValidationResult
-} from './model.js';
+} from '@konitif/composition';
 import { nodalGraphToWorkflow } from './adapters/nodalGraphAdapter.js';
 import type { NodalGraphDocument } from '../types/model.js';
 

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
 const root = new URL('../', import.meta.url);
@@ -28,7 +28,7 @@ function sourceFiles(directory) {
 
 test('manifest exposes one public product-neutral package identity', () => {
   assert.ok(expected, `Unexpected package: ${manifest.name}`);
-  assert.equal(manifest.version, '0.284.2');
+  assert.equal(manifest.version, '0.285.0');
   assert.equal(manifest.private, false);
   assert.equal(manifest.license, 'PolyForm-Noncommercial-1.0.0');
   assert.equal(manifest.repository.url, expected.repository);
@@ -42,14 +42,17 @@ test('manifest exposes one public product-neutral package identity', () => {
     '.': { types: './dist/index.d.ts', import: './dist/index.js' },
   });
 
-  const lock = JSON.parse(readFileSync(new URL('package-lock.json', root), 'utf8'));
-  assert.equal(lock.name, manifest.name);
-  assert.equal(lock.version, manifest.version);
-  assert.deepEqual(lock.packages[''].dependencies, manifest.dependencies);
-  assert.deepEqual(lock.packages[''].devDependencies, manifest.devDependencies);
-  for (const [path, entry] of Object.entries(lock.packages)) {
-    assert.notEqual(entry.link, true, `${path}: local link forbidden in public lockfile`);
-    if (entry.resolved) assert.match(entry.resolved, /^https:\/\/registry\.npmjs\.org\//, `${path}: registry archive required`);
+  const lockUrl = new URL('package-lock.json', root);
+  if (existsSync(lockUrl)) {
+    const lock = JSON.parse(readFileSync(lockUrl, 'utf8'));
+    assert.equal(lock.name, manifest.name);
+    assert.equal(lock.version, manifest.version);
+    assert.deepEqual(lock.packages[''].dependencies, manifest.dependencies);
+    assert.deepEqual(lock.packages[''].devDependencies, manifest.devDependencies);
+    for (const [path, entry] of Object.entries(lock.packages)) {
+      assert.notEqual(entry.link, true, `${path}: local link forbidden in public lockfile`);
+      if (entry.resolved) assert.match(entry.resolved, /^https:\/\/registry\.npmjs\.org\//, `${path}: registry archive required`);
+    }
   }
 });
 

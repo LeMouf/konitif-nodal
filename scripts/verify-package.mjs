@@ -85,4 +85,5 @@ console.log(JSON.stringify({
   files: files.length,
   consumer: 'isolated ESM and strict NodeNext declarations',
   evidence,
+  archive,
 }, null, 2));

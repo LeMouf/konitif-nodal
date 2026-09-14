@@ -27,6 +27,36 @@ export interface NodalNodeDefinition {
   }) => NodalRuntimeNodeResult;
 }
 
+export type NodalNodeSchemaDefinition = Omit<NodalNodeDefinition, 'execute'>;
+export type NodalNodeExecutor = NonNullable<NodalNodeDefinition['execute']>;
+
+export interface NodalDialectSchema {
+  id: string;
+  title: string;
+  nodeRegistry: NodalNodeSchemaDefinition[];
+}
+
+export interface NodalDialectAdmission {
+  dialectId: string;
+  validate: (graph: NodalGraphDocument) => NodalValidationResult;
+}
+
+export interface NodalNodeExecutionBinding {
+  nodeType: string;
+  execute: NodalNodeExecutor;
+}
+
+export interface NodalDialectExecution {
+  dialectId: string;
+  bindings: NodalNodeExecutionBinding[];
+}
+
+export interface NodalDialectRuntime {
+  schema: NodalDialectSchema;
+  admission: NodalDialectAdmission | null;
+  execution: NodalDialectExecution;
+}
+
 export interface NodalDialect {
   id: string;
   title: string;

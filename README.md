@@ -1,7 +1,7 @@
 # @konitif/nodal
 
-Product-neutral graph authoring, validation, serialization and deterministic
-execution for KONITIF applications.
+Portable graph mechanics, scoped projection contributions and deterministic
+execution for KONITIF systems.
 
 ## Installation
 
@@ -11,41 +11,83 @@ npm install @konitif/nodal
 
 ## What it provides
 
-- Canonical graph, node, port, edge and group models.
+- Graph, node, port, edge and group models.
 - Explicit graph-edit commands and commit results.
 - Validation and stable JSON serialization.
-- Dialect contracts with a small built-in mathematical dialect.
+- Host-scoped schema, admission and execution contributions.
+- A small built-in mathematical reference dialect.
 - Deterministic graph execution and observable results.
 - Adapters between Nodal graphs and `@konitif/composition` workflows.
-- A product-neutral Nodal tool-module declaration.
+- Host-scoped presentation contributions keyed by an extensible projection kind.
+- Explicit dialect- and presentation-registry activation, deactivation and disposal.
+- A portable Nodal tool-module declaration.
 
 ## Authority boundary
 
-The graph document is independent from its editor and rendering surface.
-Product dialects, product policy, UI components and application stores remain
-outside this package. Composition adapters preserve the distinction between a
-graph projection and the canonical workflow they read or update.
+A graph-native document may own graph semantics. A graph projected from a
+Composition does not: `@konitif/composition` remains its authority, and this
+package neither re-exports nor duplicates Composition contracts.
+
+Dialect and presentation registries are created and populated by each host.
+Schema declarations, admission rules and node executors remain distinct even
+when a compatibility dialect bundles them for an older caller. Registering a
+dialect or importing a specialization does not mutate process-global state.
+Projection kinds are open identifiers, allowing independent Nodal, workflow or
+block-based surfaces without making one renderer canonical. Domain dialects,
+admission policy, UI components and host stores remain outside this package.
+
+The version-1 document keeps its existing position, appearance and runtime-state
+fields for serialized compatibility. Consumers must treat those fields as
+projection or observation data, not as Composition authority.
 
 ## Quick start
 
 ```ts
 import {
   createNodalGraphDocument,
+  composeNodalDialect,
   executeGraphDocument,
-  mathDialect,
+  mathDialectContributions,
+  NodalDialectRegistry,
+  NodalPresentationRegistry,
+  registerNodalDialectContributions,
   validateGraphDocument,
 } from '@konitif/nodal';
 
-const graph = createNodalGraphDocument({ dialect: mathDialect.id });
-const validation = validateGraphDocument(graph, mathDialect);
-const execution = executeGraphDocument(graph, mathDialect);
+const dialects = new NodalDialectRegistry();
+registerNodalDialectContributions(dialects, mathDialectContributions);
+dialects.activate();
+const runtime = dialects.resolve('math');
+if (!runtime) throw new Error('Missing math dialect');
+
+// Compatibility bundle for graph helpers that still accept one dialect value.
+const math = composeNodalDialect(runtime);
+const graph = createNodalGraphDocument({ dialect: math.id });
+const validation = validateGraphDocument(graph, math);
+const execution = executeGraphDocument(graph, math);
+
+const presentations = new NodalPresentationRegistry();
+presentations.register({
+  id: 'example.workflow.presentation',
+  version: '1.0.0',
+  dialectId: math.id,
+  projectionKind: 'workflow',
+  presentation: {
+    families: {
+      source: { color: '#86b9ff', rgb: '134, 185, 255' },
+      compute: { color: '#ffd56a', rgb: '255, 213, 106' },
+      output: { color: '#7de0b0', rgb: '125, 224, 176' },
+    },
+  },
+});
+presentations.activate();
 ```
 
 ## Public entry points
 
 | Entry | Purpose |
 | --- | --- |
-| `@konitif/nodal` | Graph contracts, commands, validation, execution and Composition adapters. |
+| `@konitif/nodal` | Graph contracts, commands, validation, execution, scoped presentation registries and Composition adapters. |
 
 ## Reference
 

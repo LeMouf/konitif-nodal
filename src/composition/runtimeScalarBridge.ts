@@ -4,7 +4,7 @@ import {
   executeScalarMultiply,
   type ScalarExecutorContext
 } from '../runtime/scalarMathExecutors.js';
-import type { Module } from './model.js';
+import type { Module } from '@konitif/composition';
 
 export type CompositionScalarModuleDiagnosticSeverity = 'error' | 'warning' | 'info';
 
