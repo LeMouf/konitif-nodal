@@ -4,6 +4,16 @@
   "intent": "Make a graph editable, validatable and executable without conflating its model, dialect and runtime.",
   "clusters": [
     {
+      "id": "headless-projection-mechanics",
+      "title": "Headless projection mechanics",
+      "summary": "Derive coordinates, grids, connection drafts, port states and group layouts without a renderer.",
+      "authority": "Deterministic projection values, not graph mutation or execution.",
+      "owns": ["coordinate transforms", "viewport grid", "connection interaction plans", "port states", "group layout"],
+      "doesNotOwn": ["DOM measurement", "pointer targets", "persistence", "command admission"],
+      "workflow": ["Observe", "Calculate", "Project"],
+      "sourcePrefixes": ["projection/"]
+    },
+    {
       "id": "graph-authority",
       "title": "Graph and commands",
       "summary": "Canonical graph state and admitted mutations.",

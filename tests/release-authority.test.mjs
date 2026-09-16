@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { assertPublishingTools, assertReleaseInputs } from '../scripts/check-release.mjs';
 
@@ -8,19 +8,18 @@ const json = path => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.u
 test('release identity names the independent Nodal repository', () => {
   const manifest = json('package.json');
   assert.equal(manifest.repository.url, 'git+https://github.com/LeMouf/konitif-nodal.git');
-  assert.equal(manifest.version, '0.285.0');
+  assert.match(manifest.version, /^0\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
   assert.equal(manifest.license, 'PolyForm-Noncommercial-1.0.0');
 });
 
-test('release inputs bind Nodal to its exact repository, lock and tag ref', context => {
+test('release inputs bind Nodal to its exact repository, lock and tag ref', () => {
   const lockUrl = new URL('../package-lock.json', import.meta.url);
-  if (!existsSync(lockUrl)) return context.skip('Standalone package-lock is not present in the workspace source package.');
   const policy = json('release-policy.json');
   const manifest = json('package.json');
   const lock = JSON.parse(readFileSync(lockUrl, 'utf8'));
   const base = {
     GITHUB_REPOSITORY: 'LeMouf/konitif-nodal',
-    GITHUB_REF: 'refs/tags/v0.285.0'
+    GITHUB_REF: `refs/tags/v${manifest.version}`
   };
   assert.doesNotThrow(() => assertReleaseInputs(policy, manifest, lock, {
     ...base,
@@ -29,7 +28,7 @@ test('release inputs bind Nodal to its exact repository, lock and tag ref', cont
   assert.doesNotThrow(() => assertReleaseInputs(policy, manifest, lock, {
     ...base,
     GITHUB_EVENT_NAME: 'workflow_dispatch',
-    NODAL_RELEASE_TAG: 'v0.285.0'
+    NODAL_RELEASE_TAG: `v${manifest.version}`
   }));
   assert.throws(() => assertReleaseInputs(policy, manifest, lock, {
     ...base,
@@ -40,8 +39,29 @@ test('release inputs bind Nodal to its exact repository, lock and tag ref', cont
     ...base,
     GITHUB_EVENT_NAME: 'workflow_dispatch',
     GITHUB_REF: 'refs/heads/main',
-    NODAL_RELEASE_TAG: 'v0.285.0'
+    NODAL_RELEASE_TAG: `v${manifest.version}`
   }));
+});
+
+test('Nodal release admission rejects stale or substituted lock identity', () => {
+  const policy = json('release-policy.json');
+  const manifest = json('package.json');
+  const lock = json('package-lock.json');
+  const env = {
+    GITHUB_REPOSITORY: policy.repository,
+    GITHUB_EVENT_NAME: 'push',
+    GITHUB_REF: `refs/tags/v${manifest.version}`
+  };
+  for (const mutate of [
+    value => { value.version = '0.284.2'; },
+    value => { value.packages[''].version = '0.284.2'; },
+    value => { value.packages[''].name = '@konitif/other'; },
+    value => { value.packages[''].dependencies['@konitif/tools'] = '0.284.3'; }
+  ]) {
+    const inconsistent = structuredClone(lock);
+    mutate(inconsistent);
+    assert.throws(() => assertReleaseInputs(policy, manifest, inconsistent, env));
+  }
 });
 
 test('Nodal publication requires preinstalled OIDC-capable tools', () => {
