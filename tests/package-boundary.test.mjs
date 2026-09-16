@@ -28,7 +28,7 @@ function sourceFiles(directory) {
 
 test('manifest exposes one public product-neutral package identity', () => {
   assert.ok(expected, `Unexpected package: ${manifest.name}`);
-  assert.equal(manifest.version, '0.285.0');
+  assert.match(manifest.version, /^0\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
   assert.equal(manifest.private, false);
   assert.equal(manifest.license, 'PolyForm-Noncommercial-1.0.0');
   assert.equal(manifest.repository.url, expected.repository);

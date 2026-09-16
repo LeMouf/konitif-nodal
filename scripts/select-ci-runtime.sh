@@ -8,4 +8,3 @@ test -x "${package_node_bin}/npm"
 export PATH="${package_node_bin}:${PATH}"
 test "$(node --version)" = v24.20.0
 printf '%s\n' "${package_node_bin}" >> "${GITHUB_PATH}"
-

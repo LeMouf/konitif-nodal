@@ -19,6 +19,7 @@ npm install @konitif/nodal
 - Deterministic graph execution and observable results.
 - Adapters between Nodal graphs and `@konitif/composition` workflows.
 - Host-scoped presentation contributions keyed by an extensible projection kind.
+- Headless coordinate/grid, connection-draft, port-state and group-layout projection mechanics.
 - Explicit dialect- and presentation-registry activation, deactivation and disposal.
 - A portable Nodal tool-module declaration.
 
@@ -39,6 +40,11 @@ admission policy, UI components and host stores remain outside this package.
 The version-1 document keeps its existing position, appearance and runtime-state
 fields for serialized compatibility. Consumers must treat those fields as
 projection or observation data, not as Composition authority.
+
+Coordinate and interaction helpers derive visual values from public graph
+contracts. They do not measure DOM elements, execute graph commands, load
+documents or create a second graph authority. Browser connector measurement
+and pointer-target classification remain responsibilities of a visual host.
 
 ## Quick start
 
