@@ -11,7 +11,7 @@ const expected = {
   },
   '@konitif/nodal': {
     repository: 'git+https://github.com/LeMouf/konitif-nodal.git',
-    dependencies: { '@konitif/composition': '0.284.3', '@konitif/tools': '0.284.4' },
+    dependencies: { '@konitif/composition': '0.284.5', '@konitif/tools': '0.284.6' },
   },
   '@konitif/transport-controls': {
     repository: 'git+https://github.com/LeMouf/konitif-transport-controls.git',
