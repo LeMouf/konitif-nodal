@@ -16,6 +16,7 @@ export * from './types/model.js';
 export * from './types/registry.js';
 export * from './projection/nodalCoordinateModel.js';
 export * from './projection/nodalProjectionModel.js';
+export * from './projection/adaptiveViewport.js';
 export * from './projection/nodalInteractionModel.js';
 export * from './projection/nodalConnectionInteractionModel.js';
 export * from './projection/nodalPortStateModel.js';

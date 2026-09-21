@@ -20,6 +20,7 @@ npm install @konitif/nodal
 - Adapters between Nodal graphs and `@konitif/composition` workflows.
 - Host-scoped presentation contributions keyed by an extensible projection kind.
 - Headless coordinate/grid, connection-draft, port-state and group-layout projection mechanics.
+- Stable visible-world containment across host panel resizes.
 - Explicit dialect- and presentation-registry activation, deactivation and disposal.
 - A portable Nodal tool-module declaration.
 
