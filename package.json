@@ -1,7 +1,7 @@
 {
   "name": "@konitif/nodal",
   "license": "PolyForm-Noncommercial-1.0.0",
-  "version": "0.285.2",
+  "version": "0.285.3",
   "private": false,
   "type": "module",
   "description": "Portable graph mechanics, scoped projection contributions and deterministic execution for KONITIF systems.",

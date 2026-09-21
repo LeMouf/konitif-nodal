@@ -3,6 +3,9 @@ import { test } from 'node:test';
 import {
   addEdgeToGraph,
   addNodeToGraph,
+  captureAdaptiveViewportWindow,
+  containAdaptiveViewportWindow,
+  createAdaptiveViewportResizeController,
   createNodalGraphDocument,
   executeGraphDocument,
   mathDialect,
@@ -15,6 +18,38 @@ import {
   serializeGraphDocument,
   validateGraphDocument,
 } from '../dist/index.js';
+
+test('preserves the visible world window across panel resizes', () => {
+  const controller = createAdaptiveViewportResizeController();
+  const landscape = controller.resize({
+    viewport: { x: 0, y: 0, zoom: 1 },
+    previousSize: { width: 100, height: 100 },
+    nextSize: { width: 200, height: 100 },
+  });
+  assert.deepEqual(landscape, { x: 50, y: 0, zoom: 1 });
+
+  const portrait = controller.resize({
+    viewport: landscape,
+    previousSize: { width: 200, height: 100 },
+    nextSize: { width: 100, height: 200 },
+  });
+  assert.deepEqual(portrait, { x: 0, y: 50, zoom: 1 });
+});
+
+test('rejects invalid viewport windows and honors the host zoom ceiling', () => {
+  assert.equal(
+    captureAdaptiveViewportWindow({ x: 0, y: 0, zoom: 0 }, { width: 100, height: 100 }),
+    null,
+  );
+  assert.deepEqual(
+    containAdaptiveViewportWindow(
+      { centerX: 50, centerY: 50, width: 100, height: 100 },
+      { width: 400, height: 400 },
+      2,
+    ),
+    { x: 100, y: 100, zoom: 2 },
+  );
+});
 
 function createProofGraph() {
   let graph = createNodalGraphDocument({ dialect: mathDialect.id, id: 'graph:proof' });
